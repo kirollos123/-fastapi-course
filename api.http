@@ -1,0 +1,15 @@
+GET http://127.0.0.1:8000/
+
+###
+
+POST http://127.0.0.1:8000/
+
+###
+
+POST http://127.0.0.1:8000/createposts
+Content-Type: application/json
+
+{
+    "title": "top beaches in florida",
+    "content": "check out these awesome beaches"
+}
