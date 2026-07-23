@@ -1,15 +1,41 @@
+### Home
 GET http://127.0.0.1:8000/
 
 ###
 
-POST http://127.0.0.1:8000/
+### Get Posts
+GET http://127.0.0.1:8000/posts
 
 ###
 
-POST http://127.0.0.1:8000/createposts
+### Create Post
+POST http://127.0.0.1:8000/posts
 Content-Type: application/json
 
 {
-    "title": "top beaches in florida",
-    "content": "check out these awesome beaches"
+    "title": "Top beaches in Florida",
+    "content": "Check out these awesome beaches",
+    "published": true
 }
+
+###
+
+### Get Post by ID
+GET http://127.0.0.1:8000/posts/1
+
+###
+
+### Update Post
+PUT http://127.0.0.1:8000/posts/1
+Content-Type: application/json
+
+{
+    "title": "Updated Title",
+    "content": "Updated Content",
+    "published": false
+}
+
+###
+
+### Delete Post
+DELETE http://127.0.0.1:8000/posts/1
