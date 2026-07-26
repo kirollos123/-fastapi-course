@@ -21,7 +21,7 @@ Content-Type: application/json
 ###
 
 ### Get Post by ID
-GET http://127.0.0.1:8000/posts/1
+GET http://127.0.0.1:8000/posts/5
 
 ###
 

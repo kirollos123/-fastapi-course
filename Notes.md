@@ -1083,3 +1083,197 @@ Otherwise, FastAPI may interpret `"latest"` as the value of `{id}`, causing a va
 | Path Parameter | A dynamic value in the URL (e.g., `{id}`) |
 | Route Order | FastAPI checks routes from top to bottom |
 | Best Practice | Declare static routes before dynamic routes |
+
+
+# Retrieve One & Path Order Matters
+
+---
+
+## Retrieve One Resource
+
+In many APIs, we need to retrieve a single resource instead of returning all resources.
+
+Example endpoint:
+
+```python
+@app.get("/posts/{id}")
+def get_post(id: int):
+    return {"id": id}
+```
+
+Request:
+
+```text
+GET /posts/5
+```
+
+Response:
+
+```json
+{
+    "id": 5
+}
+```
+
+Here, `5` is a **Path Parameter** that identifies the specific resource.
+
+---
+
+# Path Order Matters
+
+FastAPI matches routes **from top to bottom**.
+
+The first matching route is executed.
+
+Therefore, the order in which routes are defined is very important.
+
+---
+
+## Incorrect Order
+
+```python
+@app.get("/posts/{id}")
+def get_post(id: int):
+    return {"id": id}
+
+
+@app.get("/posts/latest")
+def get_latest_post():
+    return {"title": "Latest Post"}
+```
+
+Request:
+
+```text
+GET /posts/latest
+```
+
+FastAPI tries to match `/posts/{id}` first.
+
+It interprets:
+
+```text
+id = "latest"
+```
+
+Since `id` is expected to be an integer, FastAPI returns:
+
+```text
+422 Unprocessable Entity
+```
+
+because `"latest"` cannot be converted to an integer.
+
+---
+
+## Correct Order
+
+Always place **fixed (static) routes** before **dynamic routes**.
+
+```python
+@app.get("/posts/latest")
+def get_latest_post():
+    return {"title": "Latest Post"}
+
+
+@app.get("/posts/{id}")
+def get_post(id: int):
+    return {"id": id}
+```
+
+Now:
+
+```
+GET /posts/latest
+```
+
+matches the first route, while
+
+```
+GET /posts/5
+```
+
+matches the second route.
+
+---
+
+## Request Flow
+
+```text
+GET /posts/latest
+        │
+        ▼
+FastAPI checks routes in order
+        │
+        ▼
+/posts/latest ✅ Match Found
+        │
+        ▼
+Execute get_latest_post()
+```
+
+---
+
+## Why Does Order Matter?
+
+FastAPI evaluates routes sequentially.
+
+The first route that matches the request path is selected.
+
+Dynamic routes like:
+
+```text
+/posts/{id}
+```
+
+can match many different URLs, so they should usually be placed **after** more specific routes.
+
+---
+
+## Best Practices
+
+- Define static routes before dynamic routes.
+- Place `/posts/latest` before `/posts/{id}`.
+- Use descriptive path names.
+- Keep route definitions organized and easy to read.
+
+---
+
+## Common Errors
+
+| Error | Cause |
+|-------|-------|
+| 422 Unprocessable Entity | Static path matched by a dynamic route expecting a different data type |
+| 404 Not Found | Route does not exist |
+| Wrong endpoint executed | Route order is incorrect |
+
+---
+
+## Interview Questions
+
+### Why does route order matter in FastAPI?
+
+Because FastAPI checks routes from top to bottom and executes the first matching route.
+
+---
+
+### Which route should be declared first?
+
+Static routes should be declared before dynamic routes.
+
+---
+
+### Why should `/posts/latest` come before `/posts/{id}`?
+
+Otherwise, FastAPI may interpret `"latest"` as the value of `{id}`, causing a validation error if `id` is expected to be an integer.
+
+---
+
+## Summary
+
+| Concept | Description |
+|---------|-------------|
+| Retrieve One | Returns a single resource using a Path Parameter |
+| Path Parameter | A dynamic value in the URL (e.g., `{id}`) |
+| Route Order | FastAPI checks routes from top to bottom |
+| Best Practice | Declare static routes before dynamic routes |
